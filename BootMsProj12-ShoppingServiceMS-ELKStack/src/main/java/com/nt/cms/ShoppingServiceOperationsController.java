@@ -1,0 +1,42 @@
+package com.nt.cms;
+
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.nt.client.BillingService_ConsumingClient;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@RequestMapping("/shopping-api")
+@Slf4j
+public class ShoppingServiceOperationsController {
+
+	@Autowired
+	private BillingService_ConsumingClient clientComp;
+	
+	@GetMapping("/info")
+	public ResponseEntity<String> getShoppingInfo() {
+		log.info("start of the getShoppingInfo()---ShoppingMS");
+		//use the provider ms
+		String billingInfo = clientComp.getBillingInfo();
+		log.info("Dest MS is inovked through client comp---ShoppingMS");
+		try {
+			Thread.sleep(20000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//get the Shopping MS results
+		String shoppingInfo = "The Shopping bill amount is "+new Random().nextInt(20000);
+		//combine the final result
+		String finalResult = shoppingInfo+"--"+billingInfo;
+		log.info("final result is prepared and send");
+		return new ResponseEntity<String>(finalResult, HttpStatus.OK);
+	}
+}
